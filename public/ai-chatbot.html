@@ -13,8 +13,10 @@
       background-color: #1a1a2e;
       color: #e0e0e0;
       font-family: 'Roboto', sans-serif;
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
       min-height: 100vh;
+      grid-gap: 2.4rem;
     }
 
     /* Sidebar Styles */
@@ -55,7 +57,7 @@
 
     /* Chatbot Container Styles */
     .chatbot-container {
-      flex: 1;
+      /*flex: 1;*/
       display: flex;
       flex-direction: column;
       padding: 20px;
