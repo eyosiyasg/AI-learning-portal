@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.SECRET_KEY;
 const bcrypt = require("bcryptjs");
 const port = process.env.PORT || 5000
-const BASE_URL = window.location.hostname === "localhost" ? "http://localhost:5000" : "https://your-app-name.onrender.com";
 require('dotenv').config()
 // Middleware
 app.use(cors());
