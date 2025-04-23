@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection</title>
+    <style>
+         body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f; /* Dark purple background */
+            color: #ffffff; /* White text */
+        }
+
+        .top-nav {
+            background-color: #2a2a40; /* Darker purple for nav */
+            color: white;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .top-nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .top-nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #bb86fc; /* Light purple for underline */
+            bottom: -5px;
+            left: 0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .top-nav a:hover {
+            color: #bb86fc; /* Light purple for hover */
+        }
+
+        .top-nav a:hover::after {
+            transform: scaleX(1); /* Glowing underline effect */
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            flex: 3;
+            text-align: center;
+            background-color: #2a2a40; /* Darker purple for content */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content h1 {
+            color: #bb86fc; /* Light purple for headings */
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .main-content video {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+            border-radius: 12px;
+            border: 2px solid #bb86fc; /* Light purple border */
+        }
+
+        .main-content button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #bb86fc; /* Light purple for buttons */
+            color: #1e1e2f; /* Dark purple text */
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px #bb86fc; /* Glow effect */
+        }
+
+        .main-content button:hover {
+            background-color: #9a67ea; /* Brighter purple on hover */
+            box-shadow: 0 0 20px #bb86fc; /* Stronger glow on hover */
+        }
+
+        .sidebar {
+            flex: 1;
+            padding: 20px;
+            background-color: #2a2a40; /* Darker purple for sidebar */
+            border-left: 1px solid #444;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-left: 20px;
+        }
+
+        .sidebar h2 {
+            color: #bb86fc; /* Light purple for headings */
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        #feedback {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        #feedback span {
+            font-weight: bold;
+            color: #bb86fc; /* Light purple for highlights */
+        }
+
+        .icon {
+            vertical-align: middle;
+            margin-right: 10px;
+            color: #bb86fc; /* Light purple for icons */
+        }
+
+        .dynamic-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #33334d; /* Slightly lighter purple */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .dynamic-feedback p {
+            margin: 0;
+            font-size: 16px;
+            color: #bb86fc; /* Light purple text */
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="ai-chatbot.html">Study Plan</a></li>
+            <li><a href="voicechat.html">Voice Assistant</a></li>
+            <li><a href="find-buddy.html">Study Buddy</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <h1>Simulated Emotion Detection</h1>
+            <video id="webcam" autoplay style="display: none;"></video>
+            <button id="start-btn">Start Detection</button>
+            <button id="stop-btn">Stop Detection</button>
+        </div>
+
+        <div class="sidebar">
+            <h2>Feedback</h2>
+            <div id="feedback">
+                <p><span class="icon">😊</span>Emotion: <span id="emotion">None</span></p>
+                <p><span class="icon">📊</span>Confidence: <span id="confidence">0%</span></p>
+                <p><span class="icon">💡</span>Suggestions: <span id="suggestions">Please start detection.</span></p>
+            </div>
+
+            <!-- Dynamic Feedback Section -->
+            <div class="dynamic-feedback">
+                <p><span class="icon">🌟</span><span id="dynamic-feedback-text">Start detection to get fun facts or encouragement!</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Code -->
+    <script>
+        const video = document.getElementById('webcam');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const emotionElement = document.getElementById('emotion');
+        const confidenceElement = document.getElementById('confidence');
+        const suggestionsElement = document.getElementById('suggestions');
+        const dynamicFeedbackElement = document.getElementById('dynamic-feedback-text');
+
+        let intervalId;
+
+        // List of emotions to simulate
+        const emotions = ["happy", "sad", "angry", "surprised", "neutral", "sleepy"];
+
+        // Feedback messages based on emotions
+        const feedbackMessages = {
+            happy: "You're doing great! Keep up the good work.",
+            sad: "Cheer up! Here's a fun fact: Honey never spoils.",
+            angry: "Take a deep breath. Did you know laughter reduces stress?",
+            surprised: "Stay curious! Learning new things is exciting.",
+            neutral: "Stay focused! You're on the right track.",
+            sleepy: "Feeling sleepy? Here's a joke: Why don't skeletons fight? They don't have the guts!",
+        };
+
+        // Fun facts, jokes, and encouragement
+        const dynamicMessages = {
+            happy: ["Did you know? Bananas are berries, but strawberries aren't!", "Keep smiling! It boosts your immune system."],
+            sad: ["Fun fact: Octopuses have three hearts!", "Cheer up! Laughter is the best medicine."],
+            angry: ["Joke: Why don't skeletons fight? They don't have the guts!", "Take a deep breath. You've got this!"],
+            surprised: ["Did you know? The Eiffel Tower can be 15 cm taller in summer due to thermal expansion!", "Stay curious! The world is full of wonders."],
+            neutral: ["Fun fact: Honey never spoils!", "Stay focused! You're doing amazing."],
+            sleepy: ["Joke: Why don't skeletons fight? They don't have the guts!", "Feeling tired? Take a quick break and stretch!"],
+        };
+
+        // Start webcam
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = 'block'; // Show the video element
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+            }
+        }
+
+        // Simulate emotion detection
+        function simulateEmotionDetection() {
+            const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+            const randomConfidence = (Math.random() * 100).toFixed(2);
+
+            emotionElement.textContent = randomEmotion;
+            confidenceElement.textContent = `${randomConfidence}%`;
+
+            // Provide feedback based on emotion
+            suggestionsElement.textContent = feedbackMessages[randomEmotion] || "Keep going!";
+
+            // Generate dynamic feedback (fun facts, jokes, encouragement)
+            const messages = dynamicMessages[randomEmotion] || ["Stay awesome!"];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            dynamicFeedbackElement.textContent = randomMessage;
+        }
+
+        // Start detection
+        startBtn.addEventListener('click', async () => {
+            await startWebcam();
+            intervalId = setInterval(simulateEmotionDetection, 10000); // Simulate every 10 seconds
+        });
+
+        // Stop detection
+        stopBtn.addEventListener('click', () => {
+            const stream = video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                video.style.display = 'none'; // Hide the video element
+            }
+            clearInterval(intervalId);
+            emotionElement.textContent = "None";
+            confidenceElement.textContent = "0%";
+            suggestionsElement.textContent = "Detection stopped.";
+            dynamicFeedbackElement.textContent = "Start detection to get fun facts or encouragement!";
+        });
+    </script>
+</body>
+</html>

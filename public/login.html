@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AI-Powered Learning Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: #8a2be2;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #bbbbbb;
+    }
+
+    .login-form {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+
+    .login-form h2 {
+      font-size: 1.5rem;
+      color: #8a2be2;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .login-form label {
+      display: block;
+      font-size: 1rem;
+      color: #bbbbbb;
+      margin-bottom: 5px;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 5px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+    }
+
+    .login-form select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 5px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+    }
+
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 25px;
+      background: #8a2be2;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-form button:hover {
+      background: #6a1b9a;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    }
+
+    .login-form a {
+      display: block;
+      text-align: center;
+      color: #8a2be2;
+      margin-top: 10px;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-form a:hover {
+      color: #6a1b9a;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Login</h1>
+      <p>Access your account</p>
+    </header>
+
+    <section class="login-form">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button> 
+       <!--  </form>
+      <a href="forgot-password.html">Forgot Password?</a>
+      <a href="register.html">Create Account</a>-->
+    </section>
+  </div>
+  <script>
+
+
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            alert(data.message)
+
+            if (res.ok) {
+              localStorage.setItem("token", data.token);
+              window.location.href = "index.html"; //Redirect to dashboard
+            } else {
+              alert(data.error);
+            }
+
+            // if(!data.error){ window.location.href = `index.html?username=${username}`}
+          })
+  </script>
+</body>
+</html>
