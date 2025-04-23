@@ -341,8 +341,7 @@
     </footer>
 
   </div>
-
-
+  <script src="config.js"></script>
 
   <script>
 
@@ -368,7 +367,7 @@
     return;
   }
 
-  const res = await fetch("http://localhost:5000/get-user", {
+  const res = await fetch(`${BASE_URL}/get-user`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` }
   });

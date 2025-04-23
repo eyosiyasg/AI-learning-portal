@@ -115,6 +115,7 @@
       <button id="send-btn">Send</button>
     </div>
   </div>
+  <script src="config.js"></script>
   <script>
     const chatWindow = document.getElementById('chat-window');
     const messageInput = document.getElementById('message-input');
@@ -135,7 +136,7 @@
 
 // Fetch chat messages from `/chat-users`
 async function loadMessages() {
-  const res = await fetch(`http://localhost:5000/chat-users?username=${currentUser}&friend=${chatFriend}`);
+  const res = await fetch(`${BASE_URL}/chat-users?username=${currentUser}&friend=${chatFriend}`);
   const data = await res.json();
 
   if (!data) {
@@ -190,7 +191,7 @@ async function loadMessages() {
     sendBtn.addEventListener('click', async () => {
       const message = messageInput.value.trim();
       if (message) {
-        await fetch('http://localhost:5000/send-message', {
+        await fetch(`${BASE_URL}/send-message`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sender: currentUser, receiver: chatFriend, type: 'text',

@@ -3,15 +3,18 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "7cede2a625f6fd74f5337e8ffeccdf36b779ab63d9a0a287eff27583cce3e46c9a17d8dc217fda1929acf1a7032376208901dea607241d35fc2fdbfe08a9a6215b74dcf5c76c71d129c0b4edd5a9849b6695eb6c743b1052928efd66618f1b054e15eea0e9821d814caaa6c050058d3436cde69337e3e8b527158934ba96b58e";
+const SECRET_KEY = process.env.SECRET_KEY;
 const bcrypt = require("bcryptjs");
-
+const port = process.env.PORT || 5000
+const BASE_URL = window.location.hostname === "localhost" ? "http://localhost:5000" : "https://your-app-name.onrender.com";
+require('dotenv').config()
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://johnDoe:12345@studyappcluster.0ludj.mongodb.net/?retryWrites=true&w=majority&appName=studyAppCluster', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -421,5 +424,5 @@ app.post('/proxy/mistral', async (req, res) => {
 
 // Start the server
 app.listen(5000, () => {
-    console.log('Server running on port 5000');
+    console.log(`Server running on port ${5000}`);
 });

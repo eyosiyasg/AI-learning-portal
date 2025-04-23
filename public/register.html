@@ -156,6 +156,8 @@
       </form>
     </section>
   </div>
+  <script src="config.js"></script>
+
    <script>
 
      document.getElementById('registrationForm').addEventListener('submit', async function(event) {
@@ -167,7 +169,7 @@
             const securityQuestion = document.getElementById('security-question').value;
             const securityAnswer = document.getElementById('security-answer').value;
 
-            const res = await fetch('http://localhost:5000/register', {
+            const res = await fetch(`${BASE_URL}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password, securityQuestion, securityAnswer })

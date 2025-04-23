@@ -197,6 +197,7 @@
          </div>
     </div>
   </div>
+  <script src="config.js"></script>
 
   <script>
     // const urlParams = new URLSearchParams(window.location.search)
@@ -218,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async() => {
     return;
   }
 
-  const res = await fetch("http://localhost:5000/get-user", {
+  const res = await fetch(`${BASE_URL}/get-user`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -238,7 +239,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 async function loadFriendRequests() {
   try {
     console.log(currentUser)
-    const res = await fetch("http://localhost:5000/get-friend-requests?username=" + currentUser.username);
+    const res = await fetch(`${BASE_URL}/get-friend-requests?username=" + currentUser.username`);
     const data = await res.json();
 
     if (!res.ok) {
@@ -266,7 +267,7 @@ async function loadFriendRequests() {
 
 async function loadFriendSuggestions() {
     try {
-        const res = await fetch(`http://localhost:5000/friend-suggestions/${currentUser.username}`);
+        const res = await fetch(`${BASE_URL}/friend-suggestions/${currentUser.username}`);
         const data = await res.json();
 
         if (data.suggestions.length === 0) {
@@ -291,7 +292,7 @@ async function loadFriendSuggestions() {
 
 async function handleFriendRequest(requesterUsername, action) {
   try {
-    const res = await fetch("http://localhost:5000/handle-friend-request", {
+    const res = await fetch(`${BASE_URL}/handle-friend-request`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -317,7 +318,7 @@ async function handleFriendRequest(requesterUsername, action) {
 // Display Friends
   async function displayFriends() {
   // Fetch the current user data using the correct username
-  const res = await fetch(`http://localhost:5000/user/${currentUser.username}`);
+  const res = await fetch(`${BASE_URL}/user/${currentUser.username}`);
   const userData = await res.json();
   const friendsContainer = document.getElementById('friends-container');
   friendsContainer.innerHTML = ''; // Clear the container
@@ -338,7 +339,7 @@ async function handleFriendRequest(requesterUsername, action) {
 // Search Functionality
 document.getElementById('search-button').addEventListener('click', async () => {
   const query = document.getElementById('search-input').value;
-  const res = await fetch(`http://localhost:5000/search?username=${query}`);
+  const res = await fetch(`${BASE_URL}/search?username=${query}`);
   const users = await res.json();
 
   const resultsContainer = document.getElementById('results-container');
@@ -359,7 +360,7 @@ document.getElementById('search-button').addEventListener('click', async () => {
 
 // Send Friend Request
 async function sendFriendRequest(username) {
-  const res = await fetch('http://localhost:5000/send-friend-request', {
+  const res = await fetch(`${BASE_URL}/send-friend-request`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ requester: currentUser.username, recipient: username })
@@ -370,7 +371,7 @@ async function sendFriendRequest(username) {
 
 // Toggle Follow/Unfollow
 async function toggleFollow(username) {
-  const res = await fetch('http://localhost:5000/unfollow', {
+  const res = await fetch(`${BASE_URL}/unfollow`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ requester: currentUser.username, recipient: username })
