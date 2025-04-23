@@ -44,6 +44,7 @@
     <div class="container">
         <h2>AI Voice Chat</h2>
         <button onclick="startVoiceChat()">Start Voice Chat</button>
+        <button onclick="stopSpeaking()">Abort speech</button>
         <div id="messages"></div>
     </div>
      <script src="config.js"></script>
@@ -108,6 +109,10 @@
             const speech = new SpeechSynthesisUtterance(text);
             speech.lang = "en-US";
             window.speechSynthesis.speak(speech);
+        }
+
+        function stopSpeaking(){
+            window.speechSynthesis.cancel()
         }
     </script>
 </body>
