@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background-color: #2a2a40;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar a {
+      color: #e0e0e0;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      color: #8a2be2;
+    }
+
+    .navbar .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: #8a2be2;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: #8a2be2;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #bbbbbb;
+    }
+
+    /* Form Styles */
+    .flashcard-form {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      margin-bottom: 40px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 1rem;
+      color: #bbbbbb;
+      margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #8a2be2;
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      height: 100px;
+    }
+
+    .glow-button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .glow-button:hover {
+      background: #6a1b9a;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    }
+
+    /* Flashcards Display */
+    .flashcards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .flashcard {
+      background: linear-gradient(145deg, #3b2a4f, #2a2a40);
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      cursor: pointer;
+      position: relative;
+      perspective: 1000px;
+      height: 200px; /* Fixed height for consistency */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 2px solid #8a2be2; /* Add border to the flashcard */
+    }
+
+    .flashcard:hover {
+      box-shadow: 0 0 25px rgba(138, 43, 226, 0.8);
+    }
+
+    .flashcard .front,
+    .flashcard .back {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      backface-visibility: hidden;
+      border-radius: 15px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: transform 0.6s ease;
+      border: 2px solid #8a2be2; /* Add border to the front and back */
+    }
+
+    .flashcard .front {
+      background: linear-gradient(145deg, #3b2a4f, #2a2a40);
+      transform: rotateY(0deg);
+    }
+
+    .flashcard .back {
+      background: linear-gradient(145deg, #2a2a40, #3b2a4f);
+      transform: rotateY(180deg);
+    }
+
+    .flashcard.flipped .front {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard.flipped .back {
+      transform: rotateY(360deg);
+    }
+
+    .flashcard h3 {
+      font-size: 1.5rem;
+      color: #8a2be2;
+      margin-bottom: 10px;
+      text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+    }
+
+    .flashcard p {
+      font-size: 1rem;
+      color: #bbbbbb;
+      text-align: center;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #2a2a40;
+      border-radius: 15px;
+      margin-top: 40px;
+    }
+
+    footer p {
+      font-size: 0.9rem;
+      color: #bbbbbb;
+      margin: 0;
+    }
+
+    footer a {
+      color: #8a2be2;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="logo">AI-Powered Learning Portal</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="ai-chatbot.html">Study Plan</a>
+      <a href="voicechat.html">Voice Assistant</a>
+      <a href="emotion-detection.html">Emotion Detection</a>
+      <a href="find-buddy.html">Study Buddy</a>
+      <a href="flashcards.html">Flashcards</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>Flashcards Generator</h1>
+      <p>Create and study flashcards with ease.</p>
+    </header>
+
+    <!-- Flashcard Form -->
+    <section class="flashcard-form">
+      <form id="flashcardForm">
+        <div class="form-group">
+          <label for="question">Question:</label>
+          <input type="text" id="question" name="question" placeholder="Enter the question" required>
+        </div>
+        <div class="form-group">
+          <label for="answer">Answer:</label>
+          <textarea id="answer" name="answer" placeholder="Enter the answer" required></textarea>
+        </div>
+        <button type="submit" class="glow-button">Add Flashcard</button>
+      </form>
+    </section>
+
+    <!-- Flashcards Display -->
+    <section class="flashcards-grid" id="flashcardsContainer">
+      <!-- Generated flashcards will appear here -->
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AI-Powered Learning Portal. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+  </footer>
+
+  <script>
+    document.getElementById('flashcardForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const question = document.getElementById('question').value;
+      const answer = document.getElementById('answer').value;
+
+      if (question && answer) {
+        addFlashcard(question, answer);
+        document.getElementById('flashcardForm').reset(); // Clear the form
+      } else {
+        alert('Please enter both a question and an answer.');
+      }
+    });
+
+    function addFlashcard(question, answer) {
+      const flashcardsContainer = document.getElementById('flashcardsContainer');
+
+      const flashcard = document.createElement('div');
+      flashcard.className = 'flashcard';
+      flashcard.innerHTML = `
+        <div class="front">
+          <h3>${question}</h3>
+        </div>
+        <div class="back">
+          <p>${answer}</p>
+        </div>
+      `;
+      flashcard.addEventListener('click', () => {
+        flashcard.classList.toggle('flipped');
+      });
+
+      flashcardsContainer.appendChild(flashcard);
+    }
+  </script>
+</body>
+</html>

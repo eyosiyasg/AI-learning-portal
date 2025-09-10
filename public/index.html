@@ -1,0 +1,396 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Learning Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+
+    .header-logo {
+      width: 200px; /* Adjust the size as needed */
+      height: auto;
+    }
+
+    .header-content {
+      text-align: center;
+      flex: 1;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #bbbbbb;
+    }
+    header h2 {
+      font-size: 1.3rem;
+      color: white;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+    header button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    #welcome-message {
+      padding: 5px;
+      font-size: 1.7rem;
+      font-weight: bolder;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 25px rgba(138, 43, 226, 0.8);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      color: #fff;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #bbbbbb;
+      margin-bottom: 20px;
+    }
+
+    .glow-button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+    }
+
+    .glow-button:hover {
+      background: #6a1b9a;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    }
+
+    .chat-container {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      right: 20px;
+      width: 300px;
+      background: #2a2a40;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+
+    .chat-header {
+      background: #8a2be2;
+      padding: 10px;
+      border-radius: 15px 15px 0 0;
+      color: #fff;
+      text-align: center;
+    }
+
+    .chat-messages {
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      color: #e0e0e0;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #8a2be2;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .chat-input button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      text-align: center;
+      padding: 40px 20px;
+      background: #2a2a40;
+      border-radius: 15px;
+      margin-bottom: 40px;
+    }
+
+    .testimonials h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      color: #8a2be2;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+      margin-bottom: 30px;
+    }
+
+    .testimonial-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: #1a1a2e;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 25px rgba(138, 43, 226, 0.8);
+    }
+
+    .testimonial-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+    }
+
+    .testimonial-card p {
+      font-size: 1rem;
+      color: #bbbbbb;
+      margin-bottom: 15px;
+    }
+
+    .testimonial-card h3 {
+      font-size: 1.2rem;
+      color: #8a2be2;
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #2a2a40;
+      border-radius: 15px;
+      margin-top: 40px;
+    }
+
+    footer p {
+      font-size: 0.9rem;
+      color: #bbbbbb;
+      margin: 0;
+    }
+
+    footer a {
+      color: #8a2be2;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="miniii.png" alt="Left Logo" class="header-logo">
+      <div class="header-content">
+        <h1>AI-Powered Learning Portal</h1>
+        <h1>በኤኣይ የታገዘ የመማሪያ ሲስተም</h1>
+        <p>Your personalized path to success</p>
+        <h2 id="welcome-message"></h2>
+        <button onclick="logout()">Logout</button>
+      </div>
+      <img src="LGOG.png" alt="Right Logo" class="header-logo">
+    </header>
+
+    <section class="dashboard">
+      <div class="card">
+        <h2>Your Study Plan</h2>
+        <p>AI-generated plan tailored just for you.</p>
+        <button class="glow-button" id="ai-chatbot-button">View Plan</button>
+      </div>
+
+      <div class="card">
+        <h2>Voice Assistant</h2>
+        <p>Hands-free learning made easy.</p>
+        <button class="glow-button" id="voicechat-button">Start Session</button>
+      </div>
+
+      <div class="card">
+        <h2>Emotion Detection</h2>
+        <p>Real-time feedback on your focus.</p>
+        <a href="emotion-detection.html" class="glow-button">Enable Webcam</a>
+      </div>
+
+      <div class="card">
+        <h2>Flashcards</h2>
+        <p>Let's make it Easy.</p>
+        <a href="flashcards.html" class="glow-button">Generate</a>
+      </div>
+
+      <div class="card">
+        <h2>Study Buddy</h2>
+        <p>Connect with a peer tutor.</p>
+        <button class="glow-button" id="find-buddy-button">Find a Buddy</button>
+      </div>
+
+      <div class="card">
+        <h2>Analytics</h2>
+        <p>Identify your level.</p>
+        <button class="glow-button">Analyse</button>
+      </div>
+    </section>
+
+    <br><br>
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+      <h2>What Our Users Say</h2>
+      <div class="testimonial-cards">
+        <div class="testimonial-card">
+          <img src="SE.png" alt="User 1">
+          <p>"This portal has completely transformed the way I study. The AI tools are incredibly helpful!"</p>
+          <h3>— Selamawit Abebe</h3>
+        </div>
+        <div class="testimonial-card">
+          <img src="sm.png?text=User+2" alt="User 2">
+          <p>"The emotion detection feature keeps me motivated and focused. Highly recommend!"</p>
+          <h3>— Tewodros Kassahun</h3>
+        </div>
+        <div class="testimonial-card">
+          <img src="JW.png?text=User+3" alt="User 3">
+          <p>"The study buddy feature helped me find the perfect partner. Learning is now more fun!"</p>
+          <h3>— Frehiwot Mekonnen</h3>
+        </div>
+        <div class="testimonial-card">
+          <img src="yo.png?text=User+4" alt="User 4">
+          <p>"The voice assistant is a game-changer. I can now study hands-free!"</p>
+          <h3>— Yohannes Assefa</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 AI-Powered Learning Portal. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+  </div>
+
+  <script>
+    //const urlParams = new URLSearchParams(window.location.search)
+    //const usernameRecieved = urlParams.get('username')
+   // Study Buddy functionality
+    // Navigation
+    document.getElementById('find-buddy-button').addEventListener('click', () => {
+      window.location.href = "find-buddy.html";
+    });
+    document.getElementById('voicechat-button').addEventListener('click', () => {
+      window.location.href = "voicechat.html";
+    });
+    document.getElementById('ai-chatbot-button').addEventListener('click', () => {
+      window.location.href = "ai-chatbot.html";
+    });
+
+    // Get logged in user
+    async function getUser() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "login.html"; // Redirect if no token
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/get-user", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+         if (res.ok) {
+      const user = await res.json();
+      // Update stored user data if needed
+      localStorage.setItem('user', JSON.stringify(user));
+      document.getElementById("welcome-message").innerText = `Welcome, ${user.username}!`;
+    } else {
+      // Token is invalid
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  }
+}
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    // Run on load
+    getUser();
+  </script>
+</body>
+</html>

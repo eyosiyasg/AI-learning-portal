@@ -1,0 +1,479 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Chat</title>
+    <style>
+        body { font-family: sans-serif;
+        font-weight: bolder;  
+        background-color: #8a2be2; 
+        color: white; 
+        text-align: center; 
+        padding: 20px;
+         }
+
+        .container {
+         max-width: 500px;
+         margin: auto;
+         padding: 20px;
+        background: #3b3f4a;
+        border-radius: 10px;
+        box-shadow: 0px 10px 45px black;
+            }
+        button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+         }
+
+        button:hover {background: #6a1b9a;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.8); }
+        #messages {
+         color: white;
+          margin-top: 20px;
+        text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AI Voice Chat</h2>
+        <button onclick="startVoiceChat()">Start Voice Chat</button>
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5000/proxy/mistral";
+
+        function startVoiceChat() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Your browser does not support speech recognition. Please use Chrome or Edge.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
+            console.log(recognition)
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const userText = event.results[0][0].transcript;
+                displayMessage("You: " + userText);
+                getAIResponse(userText);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech Recognition Error:', event.error);
+                alert("Error occurred during speech recognition. Please try again.");
+            };
+        }
+
+        function getAIResponse(userText) {
+            fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "mistral-medium",
+                    messages: [{ role: "user", content: userText }]
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                const aiResponse = data.choices[0].message.content;
+                displayMessage("AI: " + aiResponse);
+                speak(aiResponse);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                displayMessage("AI: Error processing request. Please try again.");
+            });
+        }
+
+        function displayMessage(message) {
+            const messageDiv = document.createElement("p");
+            messageDiv.textContent = message;
+            document.getElementById("messages").appendChild(messageDiv);
+        }
+
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        
+        body {
+            background-color: #8a2be2;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: #3b3f4a;
+            border-radius: 16px;
+            box-shadow: 0 10px 45px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #6a6f7f;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #f0f0f0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: #d0d0d0;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #8a2be2;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #6a1b9a;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #stopButton {
+            background: #ff4d4d;
+        }
+
+        #stopButton:hover {
+            background: #e60000;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.8);
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 18px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: #8a2be2;
+            border-bottom-right-radius: 5px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: #4a4e5a;
+            border-bottom-left-radius: 5px;
+            color: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .message-content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #4a4e5a;
+            padding: 15px 20px;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: typing 1.3s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #d0d0d0;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 82vh;
+                padding: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>AI Voice Chat</h2>
+           
+        </header>
+        
+        <div class="controls">
+            <button onclick="startVoiceChat()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15C13.6569 15 15 13.6569 15 12V5C15 3.34315 13.6569 2 12 2C10.3431 2 9 3.34315 9 5V12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M19 12C19 15.866 15.866 19 12 19M5 12C5 15.866 8.13401 19 12 19M12 19V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Start Voice Chat
+            </button>
+            <button id="stopButton" onclick="stopSpeech()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/>
+                </svg>
+                Stop AI Voice
+            </button>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">
+                <div class="message-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM8 17C7.45 17 7 16.55 7 16V8C7 7.45 7.45 7 8 7C8.55 7 9 7.45 9 8V16C9 16.55 8.55 17 8 17ZM12 17C11.45 17 11 16.55 11 16V8C11 7.45 11.45 7 12 7C12.55 7 13 7.45 13 8V16C13 16.55 12.55 17 12 17ZM16 17C15.45 17 15 16.55 15 16V8C15 7.45 15.45 7 16 7C16.55 7 17 7.45 17 8V16C17 16.55 16.55 17 16 17Z" fill="currentColor"/>
+                    </svg>
+                    AI Assistant
+                </div>
+                <div class="message-content">
+                    Hello! I'm your AI assistant. Click the Start Voice Chat button and speak to begin our conversation.
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <footer>
+        
+        </footer>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5000/proxy/mistral";
+        let synthesis = window.speechSynthesis;
+        
+        function startVoiceChat() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Your browser does not support speech recognition. Please use Chrome or Edge.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.start();
+            
+            // Show listening indicator
+            addMessage("AI Assistant", "I'm listening...", "ai");
+
+            recognition.onresult = (event) => {
+                const userText = event.results[0][0].transcript;
+                addMessage("You", userText, "user");
+                getAIResponse(userText);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech Recognition Error:', event.error);
+                addMessage("System", "Error occurred during speech recognition. Please try again.", "ai");
+            };
+        }
+        
+        function stopSpeech() {
+            if (synthesis.speaking) {
+                synthesis.cancel();
+                addMessage("System", "Speech stopped", "ai");
+            }
+        }
+
+        function getAIResponse(userText) {
+            // Show typing indicator
+            document.getElementById('typingIndicator').style.display = 'block';
+            
+            fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "mistral-tiny",
+                    messages: [{ role: "user", content: userText }]
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                // Hide typing indicator
+                document.getElementById('typingIndicator').style.display = 'none';
+                
+                const aiResponse = data.choices[0].message.content;
+                addMessage("AI Assistant", aiResponse, "ai");
+                speak(aiResponse);
+            })
+            .catch(error => {
+                // Hide typing indicator
+                document.getElementById('typingIndicator').style.display = 'none';
+                
+                console.error("Error:", error);
+                addMessage("System", "Error processing request. Please try again.", "ai");
+            });
+        }
+
+        function addMessage(sender, text, type) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    ${type === 'ai' ? 
+                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM8 17C7.45 17 7 16.55 7 16V8C7 7.45 7.45 7 8 7C8.55 7 9 7.45 9 8V16C9 16.55 8.55 17 8 17ZM12 17C11.45 17 11 16.55 11 16V8C11 7.45 11.45 7 12 7C12.55 7 13 7.45 13 8V16C13 16.55 12.55 17 12 17ZM16 17C15.45 17 15 16.55 15 16V8C15 7.45 15.45 7 16 7C16.55 7 17 7.45 17 8V16C17 16.55 16.55 17 16 17Z" fill="currentColor"/></svg>' : 
+                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2"/><path d="M17 14H7C4.23858 14 2 16.2386 2 19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19C22 16.2386 19.7614 14 17 14Z" stroke="currentColor" stroke-width="2"/></svg>'
+                    }
+                    ${sender}
+                </div>
+                <div class="message-content">${text}</div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function speak(text) {
+            if (synthesis.speaking) {
+                synthesis.cancel();
+            }
+            
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            speech.rate = 1.0;
+            speech.pitch = 1.0;
+            speech.volume = 1.0;
+            
+            synthesis.speak(speech);
+        }
+    </script>
+</body>
+</html>

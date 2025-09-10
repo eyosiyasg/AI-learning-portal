@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chatbot - Learning Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background-color: #2a2a40;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+
+    .sidebar h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: #fff;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+      margin-bottom: 20px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul li a {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar ul li a:hover {
+      color: #fff;
+    }
+
+    /* Chatbot Container Styles */
+    .chatbot-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .chatbot-container h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+      margin-bottom: 20px;
+    }
+
+    iframe {
+      flex: 1;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>AI Features</h2>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="ai-chatbot.html">Study Plan</a></li>
+      <li><a href="voicechat.html">Voice Assistant</a></li>
+      <li><a href="emotion-detection.html">Emotion Detection</a></li>
+      <li><a href="find-buddy.html">Study Buddy</a></li>
+    </ul>
+  </div>
+
+  <!-- Chatbot Container -->
+  <div class="chatbot-container">
+    <h1>AI Chatbot</h1>
+ <iframe
+    src="https://www.chatbase.co/chatbot-iframe/3wrS1SqQLVvcwZys9DOma"
+    width="100%"
+    style="height: 100%; min-height: 700px"
+    frameborder="0"
+></iframe>
+  </div>
+</body>
+</html>

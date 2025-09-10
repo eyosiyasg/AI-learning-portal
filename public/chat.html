@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1A001A;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #2E0249;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      margin: 10px;
+    }
+    .chat-header {
+      background-color: #1A001A;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #4B0082;
+    }
+    .chat-header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+      color: #8A2BE2;
+      text-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
+    }
+    .chat-window {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      border-bottom: 1px solid #4B0082;
+      background-color: #1A001A;
+    }
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      background-color: #2E0249;
+    }
+    textarea {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #4B0082;
+      border-radius: 5px;
+      resize: none;
+      background-color: #1A001A;
+      color: #fff;
+    }
+    button {
+      margin-left: 10px;
+      padding: 10px;
+      border: none;
+      background-color: #4B0082;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    button:hover {
+      background-color: #8A2BE2;
+      box-shadow: 0 0 10px #8A2BE2;
+    }
+    .message {
+      margin-bottom: 15px;
+    }
+    .message.sender {
+      text-align: right;
+    }
+    .message.receiver {
+      text-align: left;
+    }
+    .message-content {
+      display: inline-block;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 70%;
+    }
+    .sender .message-content {
+      background-color: #8A2BE2;
+      color: #fff;
+    }
+    .receiver .message-content {
+      background-color: #4B0082;
+      color: #fff;
+    }
+    .message-date{
+      font-weight: bolder;
+      font-size: 15px;
+      color: violet;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Chat with <span id="friend-name"></span></h2>
+    </div>
+    <div class="chat-window" id="chat-window"></div>
+    <div class="chat-input">
+      <textarea id="message-input" placeholder="Type your message..."></textarea>
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+  <script>
+    const chatWindow = document.getElementById('chat-window');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const friendNameElement = document.getElementById('friend-name');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentUser = urlParams.get("username");
+  const chatFriend = urlParams.get("friend");
+
+  if (!currentUser || !chatFriend) {
+    alert("User data missing");
+    window.location.href = "find-buddy.html";
+  }
+
+// Display friend's name in the chat header
+  document.getElementById('friend-name').innerText = chatFriend;
+
+// Fetch chat messages from `/chat-users`
+async function loadMessages() {
+  const res = await fetch(`http://localhost:5000/chat-users?username=${currentUser}&friend=${chatFriend}`);
+  const data = await res.json();
+
+  if (!data) {
+    console.error("Failed to load chat messages:", data.error);
+    return;
+  }
+
+  const { chatHistory } = data;  // Extract chat history
+
+  if (!chatHistory) {
+    console.warn("No chat history found.");
+    return;
+  }
+
+  // Convert sent messages to a standardized format
+  const sentMessages = chatHistory.sent.map(msg => ({
+    type: msg.type,
+    content: msg.content,
+    date: new Date(msg.date),  // Convert to Date object for sorting
+    sender: currentUser
+  }));
+
+  // Convert received messages to the same format
+  const receivedMessages = chatHistory.received.map(msg => ({
+    type: msg.type,
+    content: msg.content,
+    date: new Date(msg.date),  // Convert to Date object for sorting
+    sender: chatFriend
+  }));
+
+  // Merge both message arrays
+  const allMessages = [...sentMessages, ...receivedMessages];
+
+  // Sort messages by date (oldest first)
+  allMessages.sort((a, b) => a.date - b.date);
+
+  // Display messages in the chat window
+  chatWindow.innerHTML = ""; // Clear previous messages
+  allMessages.forEach(msg => {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message", msg.sender === currentUser ? "sender" : "receiver");
+    messageElement.innerHTML = `
+      <div class="message-content">${msg.content}</div>
+      <div class="message-date">${msg.date.toLocaleString()}</div>
+    `;
+    chatWindow.appendChild(messageElement);
+  });
+
+  chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to latest message
+}
+
+    sendBtn.addEventListener('click', async () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        await fetch('http://localhost:5000/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender: currentUser, receiver: chatFriend, type: 'text',
+            content: message,  date: new Date().toISOString() })
+        });
+        messageInput.value = '';
+        loadMessages();
+      }
+    });
+
+    loadMessages();
+    setInterval(loadMessages, 2000);
+  </script>
+</body>
+</html>

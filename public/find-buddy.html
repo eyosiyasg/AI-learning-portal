@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find a Buddy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      color: #fff;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #bbbbbb;
+    }
+
+    .search-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      width: 300px;
+      margin-right: 10px;
+    }
+
+    button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .result-card {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+
+    .result-card h2 {
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+
+    }
+
+    .result-card button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      color: #fff;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .friends-container {
+      margin-top: 40px;
+    }
+
+    .friend-card {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .friend-card h2 {
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+
+    }
+
+    .friend-card p {
+      color: #bbbbbb;
+    }
+
+    .auth-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .auth-container a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 1rem;
+    }
+
+    .auth-container a:hover {
+      text-decoration: underline;
+    }
+
+    .suggestions-container {
+      margin-top: 40px;
+    }
+
+    .suggestion-card {
+      background: #2a2a40;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .suggestion-card h2 {
+      font-size: 1.5rem;
+      color: #8a2be2;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+
+    }
+
+    .suggestion-card button {
+      background: #8a2be2;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      color: #fff;
+      cursor: pointer;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Find a Buddy</h1>
+      <p>Search for a study buddy by username</p>
+    </header>
+
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Enter username...">
+      <button id="search-button">Search</button>
+    </div>
+
+    <div class="results-container" id="results-container">
+      <!-- Search results will be displayed here -->
+    </div>
+       <h2>Your Friends</h2>
+    <div class="friends-container" id="friends-container">
+      <!-- Friends list will be displayed here -->
+    </div>
+      <h2>Suggested Buddies</h2>
+
+    <div class="suggestions-container" id="suggestions-container">
+      <!-- Suggested buddies will be displayed here -->
+    </div>
+    <div class="friend-requests-container">
+        <h2>Friend Requests</h2>
+         <div id="friend-requests-list">
+    <!-- Friend requests will be loaded here -->
+         </div>
+    </div>
+  </div>
+
+<!--   <script>
+    // const urlParams = new URLSearchParams(window.location.search)
+    // const usernameRecieved = urlParams.get('username')
+    // let currentUser = { username: usernameRecieved }; // Placeholder, replace with actual user data
+let currentUser 
+ 
+document.addEventListener("DOMContentLoaded", async() => {
+  await getUser();
+  await loadFriendRequests();
+  await loadFriendSuggestions();
+  await displayFriends();
+});
+     async function getUser() {
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html"; // Redirect to login if no token
+    return;
+  }
+
+  const res = await fetch("http://localhost:5000/get-user", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const user = await res.json();
+  console.log(user)
+  if (res.ok) {
+    currentUser = user
+  } else {
+    localStorage.removeItem("token"); // Remove invalid token
+    window.location.href = "login.html";
+  }
+
+}
+ 
+
+async function loadFriendRequests() {
+  try {
+    console.log(currentUser)
+    const res = await fetch("http://localhost:5000/get-friend-requests?username=" + currentUser.username);
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to fetch friend requests.");
+    }
+
+    const requestsContainer = document.getElementById("friend-requests-list");
+    requestsContainer.innerHTML = "";
+
+    data.friendRequestsReceived.forEach((requester) => {
+      const requestElement = document.createElement("div");
+      requestElement.classList.add("friend-request-card");
+      requestElement.innerHTML = `
+        <p><strong>${requester.username}</strong> wants to be your friend</p>
+        <button onclick="handleFriendRequest('${requester.username}', 'accept')">Accept</button>
+        <button onclick="handleFriendRequest('${requester.username}', 'reject')">Reject</button>
+      `;
+      requestsContainer.appendChild(requestElement);
+    });
+
+  } catch (err) {
+    console.error("Error loading friend requests:", err);
+  }
+}
+
+async function loadFriendSuggestions() {
+    try {
+        const res = await fetch(`http://localhost:5000/friend-suggestions/${currentUser.username}`);
+        const data = await res.json();
+
+        if (data.suggestions.length === 0) {
+            document.getElementById('suggestions-container').innerHTML = "<p>No suggestions available.</p>";
+            return;
+        }
+
+        document.getElementById('suggestions-container').innerHTML = data.suggestions.map(user => `
+            <div class="suggestion-card">
+                <h2>${user}</h2>
+                <button onclick="toggleFollow('${user}')">Follow</button>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error("Error loading friend suggestions:", error);
+    }
+}
+
+// Call this function when the page loads
+
+
+
+async function handleFriendRequest(requesterUsername, action) {
+  try {
+    const res = await fetch("http://localhost:5000/handle-friend-request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: currentUser.username,
+        requesterUsername,
+        action, // "accept" or "reject"
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      loadFriendRequests(); // Reload friend requests after action
+    } else {
+      alert(data.error);
+    }
+  } catch (err) {
+    console.error("Error handling friend request:", err);
+  }
+}
+// Display Friends
+  async function displayFriends() {
+  // Fetch the current user data using the correct username
+  const res = await fetch(`http://localhost:5000/user/${currentUser.username}`);
+  const userData = await res.json();
+  const friendsContainer = document.getElementById('friends-container');
+  friendsContainer.innerHTML = ''; // Clear the container
+
+  userData.friends.forEach(friend => {
+    const friendCard = document.createElement('div');
+    friendCard.classList.add('friend-card');
+    friendCard.innerHTML = `
+      <h2>${friend.name}</h2>
+      <button onclick="chat('${friend.name}')">Chat</button>
+      <button onclick="toggleFollow('${friend.name}')">Unfollow</button>
+    `;
+    friendsContainer.appendChild(friendCard);
+  });
+
+}
+
+// Search Functionality
+document.getElementById('search-button').addEventListener('click', async () => {
+  const query = document.getElementById('search-input').value;
+  console.log(query)
+  const res = await fetch(`http://localhost:5000/search?username=${query}`);
+  console.log(res)
+const users = await res.json()
+console.log(users)
+  const resultsContainer = document.getElementById('results-container');
+  resultsContainer.innerHTML = ''; // Clear results
+
+  users.forEach(user => {
+    if(user.username!=currentUser.username){
+    const userCard = document.createElement('div');
+    userCard.classList.add('result-card');
+    userCard.innerHTML = `
+      <h2>${user.username}</h2>
+      <button onclick="sendFriendRequest('${user.username}')">Follow</button>
+    `;
+    resultsContainer.appendChild(userCard);
+  }
+  });
+});
+
+// Send Friend Request
+async function sendFriendRequest(username) {
+  const res = await fetch('http://localhost:5000/send-friend-request', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requester: currentUser.username, recipient: username })
+  });
+  const result = await res.json();
+  alert(result.message);
+}
+
+// Toggle Follow/Unfollow
+async function toggleFollow(username) {
+  const res = await fetch('http://localhost:5000/unfollow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requester: currentUser.username, recipient: username })
+  });
+  const result = await res.json();
+  alert(result.message);
+}
+
+function chat(friend) {
+  console.log(friend)
+  window.location.href = `chat.html?username=${currentUser.username}&friend=${friend}`;
+}
+
+// Call displayFriends to show initial friends
+  // getUser();
+  // loadFriendRequests();
+  // loadFriendSuggestions();
+
+
+
+  </script> -->
+
+  <script>
+    // const urlParams = new URLSearchParams(window.location.search)
+    // const usernameRecieved = urlParams.get('username')
+    // let currentUser = { username: usernameRecieved }; // Placeholder, replace with actual user data
+let currentUser 
+const BASE_URL = 'http://localhost:5000'
+document.addEventListener("DOMContentLoaded", async() => {
+  await getUser();
+  await loadFriendRequests();
+  await loadFriendSuggestions();
+  await displayFriends();
+});
+     async function getUser() {
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html"; // Redirect to login if no token
+    return;
+  }
+
+  const res = await fetch(`${BASE_URL}/api/get-user`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const user = await res.json();
+
+  if (res.ok) {
+    currentUser = user
+  } else {
+    localStorage.removeItem("token"); // Remove invalid token
+    window.location.href = "login.html";
+  }
+
+}
+ 
+
+async function loadFriendRequests() {
+  try {
+    console.log(currentUser)
+    const res = await fetch(`${BASE_URL}/get-friend-requests?username=${currentUser.username}`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to fetch friend requests.");
+    }
+
+    const requestsContainer = document.getElementById("friend-requests-list");
+    requestsContainer.innerHTML = "";
+
+    data.friendRequestsReceived.forEach((requester) => {
+      const requestElement = document.createElement("div");
+      requestElement.classList.add("friend-request-card");
+      requestElement.innerHTML = `
+        <p><strong>${requester.username}</strong> wants to be your friend</p>
+        <button onclick="handleFriendRequest('${requester.username}', 'accept')">Accept</button>
+        <button onclick="handleFriendRequest('${requester.username}', 'reject')">Reject</button>
+      `;
+      requestsContainer.appendChild(requestElement);
+    });
+
+  } catch (err) {
+    console.error("Error loading friend requests:", err);
+  }
+}
+
+async function loadFriendSuggestions() {
+    try {
+        const res = await fetch(`${BASE_URL}/friend-suggestions/${currentUser.username}`);
+        const data = await res.json();
+
+        if (data.suggestions.length === 0) {
+            document.getElementById('suggestions-container').innerHTML = "<p>No suggestions available.</p>";
+            return;
+        }
+
+        document.getElementById('suggestions-container').innerHTML = data.suggestions.map(user => `
+            <div class="suggestion-card">
+                <h2>${user}</h2>
+                <button onclick="toggleFollow('${user}')">Follow</button>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error("Error loading friend suggestions:", error);
+    }
+}
+
+// Call this function when the page loads
+
+
+
+async function handleFriendRequest(requesterUsername, action) {
+  try {
+    const res = await fetch(`${BASE_URL}/handle-friend-request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: currentUser.username,
+        requesterUsername,
+        action, // "accept" or "reject"
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      loadFriendRequests(); // Reload friend requests after action
+    } else {
+      alert(data.error);
+    }
+  } catch (err) {
+    console.error("Error handling friend request:", err);
+  }
+}
+// Display Friends
+  async function displayFriends() {
+  // Fetch the current user data using the correct username
+  const res = await fetch(`${BASE_URL}/user/${currentUser.username}`);
+  const userData = await res.json();
+  const friendsContainer = document.getElementById('friends-container');
+  friendsContainer.innerHTML = ''; // Clear the container
+
+  userData.friends.forEach(friend => {
+    const friendCard = document.createElement('div');
+    friendCard.classList.add('friend-card');
+    friendCard.innerHTML = `
+      <h2>${friend.name}</h2>
+      <button onclick="chat('${friend.name}')">Chat</button>
+      <button onclick="toggleFollow('${friend.name}')">Unfollow</button>
+    `;
+    friendsContainer.appendChild(friendCard);
+  });
+
+}
+
+// Search Functionality
+document.getElementById('search-button').addEventListener('click', async () => {
+  const query = document.getElementById('search-input').value;
+  const res = await fetch(`${BASE_URL}/search?username=${query}`);
+  const users = await res.json();
+
+  const resultsContainer = document.getElementById('results-container');
+  resultsContainer.innerHTML = ''; // Clear results
+
+  users.forEach(user => {
+    if(user.username!=currentUser.username){
+    const userCard = document.createElement('div');
+    userCard.classList.add('result-card');
+    userCard.innerHTML = `
+      <h2>${user.username}</h2>
+      <button onclick="sendFriendRequest('${user.username}')">Follow</button>
+    `;
+    resultsContainer.appendChild(userCard);
+  }
+  });
+});
+
+// Send Friend Request
+async function sendFriendRequest(username) {
+  const res = await fetch(`${BASE_URL}/send-friend-request`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requester: currentUser.username, recipient: username })
+  });
+  const result = await res.json();
+  alert(result.message);
+}
+
+// Toggle Follow/Unfollow
+async function toggleFollow(username) {
+  const res = await fetch(`${BASE_URL}/unfollow`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requester: currentUser.username, recipient: username })
+  });
+  const result = await res.json();
+  alert(result.message);
+}
+
+function chat(friend) {
+  console.log(friend)
+  window.location.href = `chat.html?username=${currentUser.username}&friend=${friend}`;
+}
+
+// Call displayFriends to show initial friends
+  // getUser();
+  // loadFriendRequests();
+  // loadFriendSuggestions();
+
+
+
+  </script>
+</body>
+</html>
